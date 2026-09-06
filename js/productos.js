@@ -130,13 +130,17 @@ function abrirPersonalizacion(idProducto) {
   });
 
   // Muestra la ventana y actualiza el total.
-  $('#modal-personalizar').hidden = false;
+  const modal = $('#modal-personalizar');
+  modal.hidden = false;
+  modal.style.display = 'flex';
   actualizarTotalModal();
 }
 
 // Cierra la ventana modal de personalización.
 function cerrarModal() {
-  $('#modal-personalizar').hidden = true;
+  const modal = $('#modal-personalizar');
+  modal.hidden = true;
+  modal.style.display = 'none';
 }
 
 // Cambia la cantidad del modal (+1 o -1, mínimo 1).

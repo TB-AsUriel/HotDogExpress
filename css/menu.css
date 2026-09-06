@@ -109,6 +109,11 @@
 }
 
 /* ------------------------ Ventana modal --------------------------------- */
+/* Respeta el atributo "hidden": la ventana solo se ve al abrirla con JS. */
+.modal-fondo[hidden] {
+  display: none !important;
+}
+
 .modal-fondo {
   position: fixed;
   inset: 0;

@@ -399,7 +399,16 @@ function verPedido(id) {
     '  <p>Estado: <strong>' + pedido.estado + '</strong></p>' +
     '</div>';
 
-  $('#modal-pedido').hidden = false;
+  const modal = $('#modal-pedido');
+  modal.hidden = false;
+  modal.style.display = 'flex';
+}
+
+// Cierra la ventana modal de detalle de pedido.
+function cerrarModalPedido() {
+  const modal = $('#modal-pedido');
+  modal.hidden = true;
+  modal.style.display = 'none';
 }
 
 // Cancela un pedido (cambia su estado a CANCELADO).

@@ -1,0 +1,14 @@
+# Dependencias (no aplica este proyecto, solo por si se agregan herramientas)
+node_modules/
+
+# Configuración de editores
+.vscode/
+.idea/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# GitHub Pages y plantillas
+*.log

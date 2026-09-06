@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menú | HotDog Express</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/menu.css">
+</head>
+<body>
+
+  <!-- ======================= BARRA DE NAVEGACIÓN ======================= -->
+  <header class="encabezado">
+    <div class="barra contenedor">
+      <a href="index.html" class="logo">
+        <img src="img/logo.png" alt="Logo de HotDog Express">
+        <span>HotDog <b>Express</b></span>
+      </a>
+
+      <button class="boton-menu" onclick="alternarMenuMovil()" aria-label="Abrir menú">&#9776;</button>
+
+      <nav class="navegacion" id="menu-navegacion">
+        <a href="index.html">Inicio</a>
+        <a href="menu.html">Menú</a>
+        <a href="index.html#promociones">Promociones</a>
+        <a href="index.html#nosotros">Nosotros</a>
+        <a href="index.html#contacto">Contacto</a>
+        <a href="carrito.html" class="enlace-carrito">Carrito
+          <span class="contador-carrito" style="display:none;">0</span>
+        </a>
+        <a href="login.html" class="btn-admin-link">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="seccion">
+      <div class="contenedor">
+        <h1 class="titulo-seccion">Nuestro Menú</h1>
+        <p class="subtitulo-seccion">
+          Elige tu producto y personalízalo a tu gusto. Los hot dogs y hamburguesas
+          se pueden personalizar con ingredientes extra.
+        </p>
+
+        <!-- Las tarjetas de productos se generan con js/productos.js -->
+        <div id="contenedor-menu"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================= PIE DE PÁGINA ======================= -->
+  <footer class="pie">
+    <div class="contenedor pie-grid">
+      <div>
+        <h3>HotDog Express</h3>
+        <p>“El sabor que te hace volver”</p>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <p>Tel: 55 5555 5555</p>
+        <p>Correo: contacto@hotdogexpress.com</p>
+        <p>Horario: Lun-Dom 12:00 - 22:00</p>
+      </div>
+      <div>
+        <h4>Redes sociales</h4>
+        <div class="pie-enlaces">
+          <a href="index.html#contacto">Facebook</a>
+          <a href="index.html#contacto">Instagram</a>
+          <a href="index.html#contacto">WhatsApp</a>
+        </div>
+      </div>
+      <div>
+        <h4>Visítanos</h4>
+        <p>Av. Principal 123, Col. Centro</p>
+        <p>Ciudad de México</p>
+      </div>
+    </div>
+    <div class="contenedor">
+      <p class="pie-copyright">&copy; 2026 HotDog Express. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- ============ VENTANA MODAL DE PERSONALIZACIÓN ============ -->
+  <div class="modal-fondo" id="modal-personalizar" hidden>
+    <div class="modal">
+      <button class="modal-cerrar" onclick="cerrarModal()" aria-label="Cerrar">&times;</button>
+
+      <img id="modal-imagen" src="" alt="Imagen del producto">
+      <h3 id="modal-nombre"></h3>
+      <p id="modal-descripcion" class="modal-descripcion"></p>
+      <p class="modal-precio-base">Precio base: <strong id="modal-precio"></strong></p>
+
+      <!-- Pregunta de tocino -->
+      <h4>¿Quieres tocino?</h4>
+      <div class="opciones-radio">
+        <label>
+          <input type="radio" name="tocino" value="si" onchange="actualizarTotalModal()"> Sí
+        </label>
+        <label>
+          <input type="radio" name="tocino" value="no" checked onchange="actualizarTotalModal()"> No
+        </label>
+      </div>
+
+      <!-- Ingredientes adicionales extra (se genera con JS) -->
+      <h4>Ingredientes adicionales</h4>
+      <div id="modal-extras" class="lista-extras"></div>
+
+      <!-- Cantidad -->
+      <div class="modal-cantidad">
+        <span>Cantidad:</span>
+        <button type="button" onclick="cambiarCantidadModal(-1)">−</button>
+        <strong id="modal-cantidad">1</strong>
+        <button type="button" onclick="cambiarCantidadModal(1)">+</button>
+      </div>
+
+      <p class="modal-total">Total: <strong id="modal-total"></strong></p>
+
+      <button class="btn btn-primario btn-modal" onclick="agregarPersonalizado()">
+        AGREGAR AL CARRITO
+      </button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/carrito.js"></script>
+  <script src="js/productos.js"></script>
+</body>
+</html>

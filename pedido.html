@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Realizar pedido | HotDog Express</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/carrito.css">
+  <style>
+    /* Pequeños ajustes específicos de la página de pedido. */
+    .pedido-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 30px;
+      align-items: start;
+    }
+
+    .formulario label {
+      display: block;
+      font-weight: 700;
+      margin: 14px 0 6px;
+    }
+
+    .formulario input,
+    .formulario textarea,
+    .formulario select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--borde-suave);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      background: #fffdf8;
+    }
+
+    .formulario input:focus,
+    .formulario textarea:focus {
+      outline: 2px solid var(--amarillo);
+      border-color: var(--amarillo);
+    }
+
+    .grupo-pago {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .grupo-pago label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 0;
+      padding: 12px;
+      border: 1.5px solid var(--borde-suave);
+      border-radius: 10px;
+      cursor: pointer;
+      background: #fffdf8;
+    }
+
+    .grupo-pago label:hover {
+      border-color: var(--amarillo);
+    }
+
+    .grupo-pago input:checked + label,
+    .grupo-pago label:has(input:checked) {
+      border-color: var(--rojo);
+      background: #fdecec;
+    }
+
+    .error-campo {
+      color: var(--rojo);
+      font-size: 0.82rem;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .resumen-pedido .resumen-linea small {
+      display: block;
+      color: var(--gris-texto);
+    }
+
+    /* Pantalla de confirmación */
+    .confirmacion {
+      text-align: center;
+      padding: 40px 20px;
+      display: none;
+    }
+
+    .confirmacion .circulo {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: #2a9d54;
+      color: #fff;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .confirmacion h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .estado-dato {
+      display: inline-block;
+      background: #ffe9a8;
+      color: #7a5b1e;
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 820px) {
+      .pedido-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======================= BARRA DE NAVEGACIÓN ======================= -->
+  <header class="encabezado">
+    <div class="barra contenedor">
+      <a href="index.html" class="logo">
+        <img src="img/logo.png" alt="Logo de HotDog Express">
+        <span>HotDog <b>Express</b></span>
+      </a>
+
+      <button class="boton-menu" onclick="alternarMenuMovil()" aria-label="Abrir menú">&#9776;</button>
+
+      <nav class="navegacion" id="menu-navegacion">
+        <a href="index.html">Inicio</a>
+        <a href="menu.html">Menú</a>
+        <a href="index.html#promociones">Promociones</a>
+        <a href="index.html#nosotros">Nosotros</a>
+        <a href="index.html#contacto">Contacto</a>
+        <a href="carrito.html" class="enlace-carrito">Carrito
+          <span class="contador-carrito" style="display:none;">0</span>
+        </a>
+        <a href="login.html" class="btn-admin-link">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="seccion">
+      <div class="contenedor">
+
+        <h1 class="titulo-seccion">Completa tu Pedido</h1>
+        <p class="subtitulo-seccion">Llena tus datos y elige el método de pago</p>
+
+        <!-- Mensaje cuando el carrito está vacío -->
+        <div id="pedido-vacio" class="carrito-vacio" style="display:none;">
+          <p>No tienes productos en tu carrito.</p>
+          <a href="menu.html" class="btn btn-primario">VER MENÚ</a>
+        </div>
+
+        <!-- Formulario + resumen -->
+        <div id="pedido-principal" class="pedido-grid">
+
+          <!-- Formulario de datos del cliente -->
+          <form class="formulario tarjeta" id="formulario-pedido" onsubmit="return confirmarPedido(event)">
+            <h3>Datos del cliente</h3>
+
+            <label for="campo-nombre">Nombre completo</label>
+            <input type="text" id="campo-nombre" placeholder="Ej. Juan Pérez" required>
+            <p class="error-campo" id="error-nombre">Completa todos los campos.</p>
+
+            <label for="campo-telefono">Teléfono</label>
+            <input type="tel" id="campo-telefono" placeholder="Ej. 55 1234 5678" required>
+            <p class="error-campo" id="error-telefono">Ingresa un teléfono válido (10 a 15 dígitos).</p>
+
+            <label for="campo-direccion">Dirección</label>
+            <input type="text" id="campo-direccion" placeholder="Calle, número, colonia" required>
+            <p class="error-campo" id="error-direccion">Ingresa tu dirección.</p>
+
+            <label for="campo-referencias">Referencias</label>
+            <input type="text" id="campo-referencias" placeholder="Ej. Casa de portón verde">
+
+            <label>Método de pago</label>
+            <div class="grupo-pago">
+              <label><input type="radio" name="pago" value="Efectivo" checked> Efectivo</label>
+              <label><input type="radio" name="pago" value="Tarjeta"> Tarjeta</label>
+              <label><input type="radio" name="pago" value="Transferencia"> Transferencia</label>
+            </div>
+            <p class="error-campo" id="error-pago">Selecciona un método de pago.</p>
+
+            <label for="campo-comentarios">Comentarios</label>
+            <textarea id="campo-comentarios" rows="3" placeholder="Ej. Sin cebolla, entregar antes de las 7pm"></textarea>
+
+            <button type="submit" class="btn btn-primario" style="width:100%; margin-top:20px;">
+              CONFIRMAR PEDIDO
+            </button>
+          </form>
+
+          <!-- Resumen del pedido -->
+          <aside class="resumen" id="resumen-pedido">
+            <h3>Resumen del pedido</h3>
+            <div id="resumen-articulos"></div>
+            <div class="resumen-linea">
+              <span>Productos</span>
+              <span id="resumen-subtotal">$0</span>
+            </div>
+            <div class="resumen-linea">
+              <span>Envío</span>
+              <span>$20</span>
+            </div>
+            <div class="resumen-linea resumen-total">
+              <span>TOTAL</span>
+              <span id="resumen-total">$0</span>
+            </div>
+          </aside>
+
+        </div>
+
+        <!-- Pantalla de pedido realizado con éxito -->
+        <div class="confirmacion tarjeta" id="confirmacion-pedido">
+          <div class="circulo">✓</div>
+          <h2>¡PEDIDO REALIZADO!</h2>
+          <p style="margin-bottom:10px;">Gracias por tu compra, en breve lo preparamos.</p>
+          <p><strong>Número de pedido:</strong> <span id="conf-numero">#0000</span></p>
+          <p><strong>Total:</strong> <span id="conf-total">$0</span></p>
+          <p>Estado:</p>
+          <span class="estado-dato">PENDIENTE</span>
+          <br><br>
+          <a href="menu.html" class="btn btn-secundario">VOLVER AL MENÚ</a>
+          <a href="index.html" class="btn btn-primario">IR AL INICIO</a>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================= PIE DE PÁGINA ======================= -->
+  <footer class="pie">
+    <div class="contenedor pie-grid">
+      <div>
+        <h3>HotDog Express</h3>
+        <p>“El sabor que te hace volver”</p>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <p>Tel: 55 5555 5555</p>
+        <p>Correo: contacto@hotdogexpress.com</p>
+        <p>Horario: Lun-Dom 12:00 - 22:00</p>
+      </div>
+      <div>
+        <h4>Redes sociales</h4>
+        <div class="pie-enlaces">
+          <a href="index.html#contacto">Facebook</a>
+          <a href="index.html#contacto">Instagram</a>
+          <a href="index.html#contacto">WhatsApp</a>
+        </div>
+      </div>
+      <div>
+        <h4>Visítanos</h4>
+        <p>Av. Principal 123, Col. Centro</p>
+        <p>Ciudad de México</p>
+      </div>
+    </div>
+    <div class="contenedor">
+      <p class="pie-copyright">&copy; 2026 HotDog Express. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/carrito.js"></script>
+  <script src="js/pedidos.js"></script>
+</body>
+</html>

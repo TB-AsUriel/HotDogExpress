@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel administrativo | HotDog Express</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="pagina-admin">
+
+  <!-- ======================= MENÚ LATERAL ======================= -->
+  <aside class="admin-lateral" id="admin-lateral">
+    <div class="admin-marca">
+      <img src="img/logo.png" alt="Logo HotDog Express">
+      <div>
+        <strong>HotDog Express</strong>
+        <small>Panel administrativo</small>
+      </div>
+    </div>
+
+    <nav class="admin-menu" id="admin-menu">
+      <button data-seccion="dashboard"    class="activo" onclick="mostrarSeccion('dashboard')">Dashboard</button>
+      <button data-seccion="pedidos"      onclick="mostrarSeccion('pedidos')">Pedidos</button>
+      <button data-seccion="productos"    onclick="mostrarSeccion('productos')">Productos</button>
+      <button data-seccion="ingredientes" onclick="mostrarSeccion('ingredientes')">Ingredientes</button>
+      <button data-seccion="inventario"   onclick="mostrarSeccion('inventario')">Inventario</button>
+      <button data-seccion="ventas"       onclick="mostrarSeccion('ventas')">Ventas</button>
+      <button data-seccion="reportes"     onclick="mostrarSeccion('reportes')">Reportes</button>
+      <button data-seccion="utilidades"   onclick="mostrarSeccion('utilidades')">Utilidades</button>
+      <button data-seccion="personal"     onclick="mostrarSeccion('personal')">Personal</button>
+      <button data-seccion="pagos"        onclick="mostrarSeccion('pagos')">Pagos</button>
+    </nav>
+
+    <button class="admin-cerrar-sesion" onclick="cerrarSesion()">Cerrar sesión</button>
+  </aside>
+
+  <!-- Botón para abrir el menú lateral en teléfonos -->
+  <button class="admin-abrir-menu" onclick="document.getElementById('admin-lateral').classList.toggle('abierto')">&#9776;</button>
+  <div class="admin-cortina" id="admin-cortina"
+       onclick="document.getElementById('admin-lateral').classList.remove('abierto'); this.style.display='none';"></div>
+
+  <!-- ======================= CONTENIDO PRINCIPAL ======================= -->
+  <main class="admin-contenido" id="admin-contenido">
+
+    <header class="admin-cabecera">
+      <h1 id="titulo-seccion">Dashboard</h1>
+      <span id="fecha-admin"></span>
+    </header>
+
+    <!-- ========================= DASHBOARD ========================= -->
+    <section class="admin-seccion" id="seccion-dashboard">
+
+      <div class="grid-tarjetas">
+        <div class="tarjeta-dato">
+          <span class="dato-etiqueta">VENTAS DEL DÍA</span>
+          <span class="dato-valor" id="dato-ventas">$0</span>
+        </div>
+        <div class="tarjeta-dato">
+          <span class="dato-etiqueta">PEDIDOS</span>
+          <span class="dato-valor" id="dato-pedidos">0</span>
+        </div>
+        <div class="tarjeta-dato">
+          <span class="dato-etiqueta">PRODUCTOS VENDIDOS</span>
+          <span class="dato-valor" id="dato-productos">0</span>
+        </div>
+        <div class="tarjeta-dato">
+          <span class="dato-etiqueta">UTILIDAD</span>
+          <span class="dato-valor" id="dato-utilidad">$0</span>
+        </div>
+      </div>
+
+      <!-- Gráficas dibujadas con JavaScript (canvas) -->
+      <div class="grid-graficas">
+        <div class="tarjeta-grafica">
+          <h3>Ventas por día (últimos 7 días)</h3>
+          <canvas id="grafica-ventas" width="600" height="240"></canvas>
+        </div>
+        <div class="tarjeta-grafica">
+          <h3>Productos más vendidos</h3>
+          <canvas id="grafica-top" width="600" height="240"></canvas>
+        </div>
+        <div class="tarjeta-grafica">
+          <h3>Pedidos realizados (últimos 7 días)</h3>
+          <canvas id="grafica-pedidos" width="600" height="240"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================= PEDIDOS ========================= -->
+    <section class="admin-seccion" id="seccion-pedidos" hidden>
+      <div class="admin-herramientas">
+        <label>Filtrar por estado:
+          <select id="filtro-estado" onchange="renderizarPedidos()">
+            <option value="">Todos</option>
+            <option value="PENDIENTE">Pendiente</option>
+            <option value="PREPARANDO">Preparando</option>
+            <option value="LISTO">Listo</option>
+            <option value="ENTREGADO">Entregado</option>
+            <option value="CANCELADO">Cancelado</option>
+          </select>
+        </label>
+      </div>
+      <div class="tabla-envoltura">
+        <table class="tabla-admin">
+          <thead>
+            <tr>
+              <th>Pedido</th><th>Cliente</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpo-pedidos"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================= PRODUCTOS ========================= -->
+    <section class="admin-seccion" id="seccion-productos" hidden>
+      <div class="admin-formulario">
+        <h3 id="titulo-form-producto">Nuevo producto</h3>
+        <form id="form-producto" onsubmit="return guardarProducto(event)">
+          <input type="hidden" id="prod-id">
+          <div>
+            <label>Nombre</label>
+            <input type="text" id="prod-nombre" required>
+          </div>
+          <div>
+            <label>Categoría</label>
+            <select id="prod-categoria">
+              <option value="hotdog">Hot Dogs</option>
+              <option value="hamburguesa">Hamburguesas</option>
+              <option value="complemento">Complementos</option>
+            </select>
+          </div>
+          <div>
+            <label>Precio ($)</label>
+            <input type="number" id="prod-precio" min="0" step="0.01" required>
+          </div>
+          <div>
+            <label>Imagen</label>
+            <select id="prod-imagen" data-predeterminada="img/hotdog-clasico.jpg"></select>
+          </div>
+          <div class="columna-completa">
+            <label>Descripción</label>
+            <textarea id="prod-descripcion" rows="2" required></textarea>
+          </div>
+          <div class="columna-completa">
+            <label class="fila-check"><input type="checkbox" id="prod-disponible" checked> Disponible para la venta</label>
+          </div>
+          <div class="columna-completa">
+            <button type="submit" class="btn-accion guardar">GUARDAR PRODUCTO</button>
+            <button type="button" class="btn-accion neutro" onclick="cancelarEdicionProducto()">CANCELAR</button>
+          </div>
+        </form>
+      </div>
+      <div class="tabla-envoltura">
+        <table class="tabla-admin">
+          <thead>
+            <tr>
+              <th>Imagen</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Disponible</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpo-productos"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================= INGREDIENTES ========================= -->
+    <section class="admin-seccion" id="seccion-ingredientes" hidden>
+      <div class="admin-formulario">
+        <h3 id="titulo-form-ingrediente">Nuevo ingrediente</h3>
+        <form id="form-ingrediente" onsubmit="return guardarIngrediente(event)">
+          <input type="hidden" id="ing-id">
+          <div>
+            <label>Nombre</label>
+            <input type="text" id="ing-nombre" required>
+          </div>
+          <div>
+            <label>Cantidad</label>
+            <input type="number" id="ing-cantidad" min="0" step="0.001" required>
+          </div>
+          <div>
+            <label>Unidad</label>
+            <select id="ing-unidad">
+              <option value="piezas">piezas</option>
+              <option value="kg">kg</option>
+              <option value="g">g</option>
+              <option value="litros">litros</option>
+            </select>
+          </div>
+          <div>
+            <label>Stock mínimo</label>
+            <input type="number" id="ing-minimo" min="0" step="0.001" required>
+          </div>
+          <div class="columna-completa">
+            <button type="submit" class="btn-accion guardar">GUARDAR INGREDIENTE</button>
+            <button type="button" class="btn-accion neutro" onclick="cancelarEdicionIngrediente()">CANCELAR</button>
+          </div>
+        </form>
+      </div>
+      <div class="tabla-envoltura">
+        <table class="tabla-admin">
+          <thead>
+            <tr>
+              <th>Ingrediente</th><th>Cantidad</th><th>Unidad</th><th>Stock mínimo</th><th>Estado</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpo-ingredientes"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================= INVENTARIO ========================= -->
+    <section class="admin-seccion" id="seccion-inventario" hidden>
+      <div class="admin-formulario">
+        <h3>Registrar movimiento de almacén</h3>
+        <form id="form-inventario" onsubmit="return registrarMovimiento(event)">
+          <div>
+            <label>Ingrediente</label>
+            <select id="inv-ingrediente" required></select>
+          </div>
+          <div>
+            <label>Tipo de movimiento</label>
+            <select id="inv-tipo">
+              <option value="entrada">ENTRADA</option>
+              <option value="salida">SALIDA</option>
+            </select>
+          </div>
+          <div>
+            <label>Cantidad</label>
+            <input type="number" id="inv-cantidad" min="0.001" step="0.001" required>
+          </div>
+          <div>
+            <label>Motivo</label>
+            <input type="text" id="inv-motivo" placeholder="Ej. Compra a proveedor" required>
+          </div>
+          <div class="columna-completa">
+            <button type="submit" class="btn-accion guardar">REGISTRAR MOVIMIENTO</button>
+          </div>
+        </form>
+      </div>
+      <div class="tabla-envoltura">
+        <table class="tabla-admin">
+          <thead>
+            <tr>
+              <th>Fecha</th><th>Ingrediente</th><th>Tipo</th><th>Cantidad</th><th>Motivo</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpo-inventario"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================= VENTAS ========================= -->
+    <section class="admin-seccion" id="seccion-ventas" hidden>
+      <div class="grid-tarjetas">
+        <div class="tarjeta-dato">
+          <span class="dato-etiqueta">VENTAS DEL DÍA</span>
+          <span class="dato-valor" id="venta-dia">$0</span>
+        </div>
+        <div class="tarjeta-dato">
+          <span class="dato-etiqueta">VENTAS DE LA SEMANA</span>
+          <span class="dato-valor" id="venta-semana">$0</span>
+        </div>
+        <div class="tarjeta-dato">
+          <span class="dato-etiqueta">VENTAS DEL MES</span>
+          <span class="dato-valor" id="venta-mes">$0</span>
+        </div>
+      </div>
+
+      <div class="grid-dos">
+        <div class="tarjeta-grafica">
+          <h3>Ventas del día por categoría</h3>
+          <div id="ventas-categorias"></div>
+        </div>
+        <div class="tarjeta-grafica">
+          <h3>Métodos de pago (hoy)</h3>
+          <div id="ventas-pagos"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================= REPORTES ========================= -->
+    <section class="admin-seccion" id="seccion-reportes" hidden>
+      <div class="admin-herramientas">
+        <label>Periodo:
+          <select id="reporte-periodo">
+            <option value="hoy">Hoy</option>
+            <option value="semana">Esta semana</option>
+            <option value="mes">Este mes</option>
+          </select>
+        </label>
+        <button class="btn-accion guardar" onclick="generarReporte(true)">GENERAR REPORTE</button>
+        <button class="btn-accion neutro" onclick="imprimirReporte()">IMPRIMIR REPORTE</button>
+      </div>
+
+      <div class="tarjeta-grafica" id="reporte-resultado" style="display:none;"></div>
+    </section>
+
+    <!-- ========================= UTILIDADES ========================= -->
+    <section class="admin-seccion" id="seccion-utilidades" hidden>
+      <div class="admin-herramientas">
+        <label>Periodo:
+          <select id="utilidad-periodo" onchange="renderizarUtilidades()">
+            <option value="hoy">Hoy</option>
+            <option value="semana">Esta semana</option>
+            <option value="mes">Este mes</option>
+          </select>
+        </label>
+      </div>
+      <div class="tarjeta-grafica" id="utilidad-resultado"></div>
+    </section>
+
+    <!-- ========================= PERSONAL ========================= -->
+    <section class="admin-seccion" id="seccion-personal" hidden>
+      <div class="admin-formulario">
+        <h3 id="titulo-form-empleado">Registrar empleado</h3>
+        <form id="form-empleado" onsubmit="return guardarEmpleado(event)">
+          <input type="hidden" id="emp-id">
+          <div>
+            <label>Nombre</label>
+            <input type="text" id="emp-nombre" required>
+          </div>
+          <div>
+            <label>Puesto</label>
+            <input type="text" id="emp-puesto" placeholder="Ej. Cocinero" required>
+          </div>
+          <div>
+            <label>Teléfono</label>
+            <input type="tel" id="emp-telefono" required>
+          </div>
+          <div>
+            <label>Pago por día ($)</label>
+            <input type="number" id="emp-pago" min="0" step="0.01" required>
+          </div>
+          <div>
+            <label>Estado</label>
+            <select id="emp-estado">
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+            </select>
+          </div>
+          <div class="columna-completa">
+            <button type="submit" class="btn-accion guardar">GUARDAR EMPLEADO</button>
+            <button type="button" class="btn-accion neutro" onclick="cancelarEdicionEmpleado()">CANCELAR</button>
+          </div>
+        </form>
+      </div>
+      <div class="tabla-envoltura">
+        <table class="tabla-admin">
+          <thead>
+            <tr>
+              <th>Empleado</th><th>Puesto</th><th>Teléfono</th><th>Pago diario</th><th>Estado</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpo-personal"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================= PAGOS ========================= -->
+    <section class="admin-seccion" id="seccion-pagos" hidden>
+      <div class="admin-formulario">
+        <h3 id="titulo-form-pago">Registrar pago</h3>
+        <form id="form-pago" onsubmit="return guardarPago(event)">
+          <input type="hidden" id="pago-id">
+          <div>
+            <label>Empleado</label>
+            <select id="pago-empleado" onchange="actualizarTotalPago()" required></select>
+          </div>
+          <div>
+            <label>Puesto</label>
+            <input type="text" id="pago-puesto" readonly>
+          </div>
+          <div>
+            <label>Días trabajados</label>
+            <input type="number" id="pago-dias" min="1" value="1" oninput="actualizarTotalPago()" required>
+          </div>
+          <div>
+            <label>Pago por día ($)</label>
+            <input type="number" id="pago-pdias" min="0" step="0.01" oninput="actualizarTotalPago()" required>
+          </div>
+          <div>
+            <label>Estado</label>
+            <select id="pago-estado">
+              <option value="PAGADO">PAGADO</option>
+              <option value="PENDIENTE">PENDIENTE</option>
+            </select>
+          </div>
+          <div>
+            <label>Fecha</label>
+            <input type="date" id="pago-fecha" required>
+          </div>
+          <div class="columna-completa">
+            <p class="pago-total-linea">TOTAL: <strong id="pago-total">$0</strong></p>
+          </div>
+          <div class="columna-completa">
+            <button type="submit" class="btn-accion guardar">GUARDAR PAGO</button>
+            <button type="button" class="btn-accion neutro" onclick="cancelarEdicionPago()">CANCELAR</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="admin-herramientas">
+        <label>Filtrar empleado:
+          <select id="filtro-pago-empleado" onchange="renderizarPagos()">
+            <option value="">Todos</option>
+          </select>
+        </label>
+        <label>Filtrar fecha:
+          <input type="date" id="filtro-pago-fecha" onchange="renderizarPagos()">
+        </label>
+      </div>
+
+      <div class="tabla-envoltura">
+        <table class="tabla-admin">
+          <thead>
+            <tr>
+              <th>Empleado</th><th>Puesto</th><th>Días</th><th>Pago/día</th><th>Total</th><th>Estado</th><th>Fecha</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpo-pagos"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Ventana modal para ver el detalle de un pedido -->
+  <div class="modal-fondo" id="modal-pedido" hidden>
+    <div class="modal">
+      <button class="modal-cerrar" onclick="document.getElementById('modal-pedido').hidden = true;">&times;</button>
+      <h3 id="modal-pedido-titulo"></h3>
+      <div id="modal-pedido-cuerpo"></div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

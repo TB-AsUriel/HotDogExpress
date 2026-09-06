@@ -1,0 +1,638 @@
+/* ==========================================================================
+   css/admin.css  —  Estilos del panel administrativo.
+
+   Contiene:
+   - Estructura con menú lateral y contenido.
+   - Tarjetas de indicadores, gráficas y tablas.
+   - Formularios y botones de acción.
+   - Ventana modal para ver pedidos.
+   - Mensajes toast.
+   - Diseño responsive y estilos de impresión del reporte.
+   ========================================================================== */
+
+/* ----------------------------- Variables -------------------------------- */
+:root {
+  --rojo: #d62828;
+  --rojo-oscuro: #9d0208;
+  --amarillo: #ffba08;
+  --crema: #fff3e0;
+  --oscuro: #171310;
+  --gris-texto: #5b5148;
+  --blanco: #ffffff;
+  --borde-suave: #efe0cd;
+  --sombra: 0 4px 14px rgba(23, 19, 16, 0.1);
+  --radio: 12px;
+}
+
+/* ------------------------------- Base ----------------------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  background: #f6efe4;
+  color: var(--oscuro);
+  line-height: 1.5;
+}
+
+img {
+  max-width: 100%;
+}
+
+/* --------------------------- Menú lateral ------------------------------- */
+.pagina-admin {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-lateral {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--oscuro);
+  color: #efe7dc;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  padding: 18px 12px;
+}
+
+.admin-marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 14px;
+}
+
+.admin-marca img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+.admin-marca strong {
+  display: block;
+  color: var(--amarillo);
+}
+
+.admin-marca small {
+  color: #bdb1a1;
+}
+
+.admin-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.admin-menu button {
+  text-align: left;
+  background: none;
+  border: none;
+  color: #e6dccb;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 11px 14px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.admin-menu button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--amarillo);
+}
+
+.admin-menu button.activo {
+  background: var(--rojo);
+  color: var(--blanco);
+}
+
+.admin-cerrar-sesion {
+  margin-top: 12px;
+  background: transparent;
+  border: 1px solid #5a5148;
+  color: #e6dccb;
+  font-family: inherit;
+  font-weight: 600;
+  padding: 11px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.admin-cerrar-sesion:hover {
+  background: var(--rojo);
+  border-color: var(--rojo);
+  color: var(--blanco);
+}
+
+/* Botón para abrir el menú lateral en pantallas pequeñas */
+.admin-abrir-menu {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 14px;
+  z-index: 1100;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  background: var(--rojo);
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.admin-cortina {
+  display: none;
+}
+
+/* --------------------------- Contenido ---------------------------------- */
+.admin-contenido {
+  flex: 1;
+  margin-left: 240px;
+  padding: 22px 26px 50px;
+}
+
+.admin-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.admin-cabecera h1 {
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.admin-cabecera span {
+  color: var(--gris-texto);
+  font-weight: 600;
+}
+
+/* ------------------------- Tarjetas de datos ----------------------------- */
+.grid-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.tarjeta-dato {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  border-left: 6px solid var(--rojo);
+  padding: 20px;
+}
+
+.tarjeta-dato .dato-etiqueta {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--gris-texto);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.tarjeta-dato .dato-valor {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--rojo-oscuro);
+}
+
+/* ------------------------------ Gráficas -------------------------------- */
+.grid-graficas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.tarjeta-grafica {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 18px;
+}
+
+.tarjeta-grafica h3 {
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+  color: var(--gris-texto);
+}
+
+.tarjeta-grafica canvas {
+  width: 100%;
+  height: auto;
+}
+
+.grid-dos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* ------------------------------ Tablas ---------------------------------- */
+.tabla-envoltura {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  overflow-x: auto;
+  margin-bottom: 22px;
+}
+
+.tabla-admin {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.tabla-admin th,
+.tabla-admin td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--borde-suave);
+  font-size: 0.9rem;
+}
+
+.tabla-admin th {
+  background: #fbeeda;
+  color: #6d4d1f;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.6px;
+}
+
+.tabla-admin tr:last-child td {
+  border-bottom: none;
+}
+
+.tabla-admin tr:hover td {
+  background: #fffaf2;
+}
+
+.tabla-admin .thumb-img {
+  width: 56px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 7px;
+}
+
+/* ----------------------- Insignias y estados ---------------------------- */
+.insignia {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 14px;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.insignia-verde  { background: #d4eeda; color: #1e6b34; }
+.insignia-roja   { background: #f5d3d3; color: #a3161f; }
+.insignia-ambar  { background: #ffe9a8; color: #7a5b1e; }
+.insignia-azul   { background: #d6e4ff; color: #1d4eae; }
+.insignia-gris   { background: #e6e0d6; color: #5b5148; }
+
+/* Alerta de inventario bajo */
+.alerta-bajo {
+  background: #fdecec;
+  color: var(--rojo-oscuro);
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+/* Selector de estado dentro de la tabla */
+select.selector-estado {
+  padding: 6px 8px;
+  border: 1.5px solid var(--borde-suave);
+  border-radius: 8px;
+  font-family: inherit;
+  background: #fffdf8;
+}
+
+/* --------------------------- Botones de acción -------------------------- */
+.btn-accion {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 8px 14px;
+  border-radius: 8px;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.btn-accion:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.btn-accion.guardar { background: var(--rojo); color: #fff; }
+.btn-accion.ver     { background: #e8eefc; color: #1d4eae; }
+.btn-accion.editar  { background: #fff3d6; color: #8a5a00; }
+.btn-accion.cancelar { background: #fce4e4; color: var(--rojo-oscuro); }
+.btn-accion.eliminar { background: #f5d3d3; color: var(--rojo-oscuro); }
+.btn-accion.neutro  { background: #e6e0d6; color: var(--oscuro); }
+
+/* --------------------------- Formularios -------------------------------- */
+.admin-formulario {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 20px;
+  margin-bottom: 22px;
+}
+
+.admin-formulario h3 {
+  margin-bottom: 14px;
+  color: var(--rojo-oscuro);
+}
+
+.admin-formulario form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.admin-formulario label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.82rem;
+  margin-bottom: 5px;
+  color: var(--gris-texto);
+}
+
+.admin-formulario input,
+.admin-formulario select,
+.admin-formulario textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--borde-suave);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  background: #fffdf8;
+}
+
+.admin-formulario input:focus,
+.admin-formulario select:focus,
+.admin-formulario textarea:focus {
+  outline: 2px solid var(--amarillo);
+}
+
+.columna-completa {
+  grid-column: 1 / -1;
+}
+
+.fila-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--oscuro);
+}
+
+.fila-check input {
+  width: auto;
+}
+
+/* Herramientas (filtros) sobre las tablas */
+.admin-herramientas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  background: var(--blanco);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 14px 18px;
+}
+
+.admin-herramientas label {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--gris-texto);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-herramientas select,
+.admin-herramientas input {
+  padding: 8px 10px;
+  border: 1.5px solid var(--borde-suave);
+  border-radius: 8px;
+  font-family: inherit;
+  background: #fffdf8;
+}
+
+/* ---------------------- Línea del total de pago ------------------------- */
+.pago-total-linea {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.pago-total-linea strong {
+  color: var(--rojo-oscuro);
+  font-size: 1.4rem;
+}
+
+/* --------------------- Detalle de ventas (ventas) ----------------------- */
+.lista-detalle {
+  list-style: none;
+}
+
+.lista-detalle li {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 1px dashed var(--borde-suave);
+  font-size: 0.92rem;
+}
+
+.lista-detalle li.total {
+  border-bottom: none;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--rojo-oscuro);
+}
+
+/* -------------------------- Ventana modal -------------------------------- */
+.modal-fondo {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  padding: 20px;
+}
+
+.modal {
+  background: var(--blanco);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 460px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 26px;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-cerrar {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 1.7rem;
+  cursor: pointer;
+  color: var(--gris-texto);
+}
+
+.modal h3 {
+  margin-bottom: 12px;
+  color: var(--rojo-oscuro);
+}
+
+.modal .detalle-pedido p {
+  margin-bottom: 6px;
+  font-size: 0.92rem;
+}
+
+.modal .detalle-pedido hr {
+  border: none;
+  border-top: 1px dashed var(--borde-suave);
+  margin: 10px 0;
+}
+
+/* ---------------------------- Mensajes toast ----------------------------- */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 13px 24px;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  z-index: 6000;
+  transition: opacity 0.4s, transform 0.4s;
+}
+
+.toast-exito { background: #2a9d54; }
+.toast-error { background: #d62828; }
+.toast-info  { background: #2563eb; }
+
+.toast-salida {
+  opacity: 0;
+  transform: translateX(-50%) translateY(20px);
+}
+
+/* ------------------------------ Responsive -------------------------------- */
+@media (max-width: 900px) {
+  .grid-dos {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 800px) {
+  .pagina-admin {
+    display: block;
+  }
+
+  .admin-lateral {
+    transform: translateX(-100%);
+    transition: transform 0.25s;
+    width: 250px;
+  }
+
+  .admin-lateral.abierto {
+    transform: translateX(0);
+  }
+
+  .admin-abrir-menu {
+    display: block;
+  }
+
+  .admin-cortina {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 990;
+  }
+
+  .admin-contenido {
+    margin-left: 0;
+    padding: 74px 16px 40px;
+  }
+
+  .admin-cabecera {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ------------------------- Impresión de reporte ------------------------- */
+@media print {
+  /* Al imprimir solo se muestra la sección del reporte. */
+  .admin-lateral,
+  .admin-abrir-menu,
+  .admin-cabecera,
+  .admin-herramientas, 
+  .admin-contenido .admin-seccion {
+    display: none !important;
+  }
+
+  .admin-contenido {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* La sección del reporte se imprime completa. */
+  #seccion-reportes {
+    display: block !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #seccion-reportes,
+  #seccion-reportes * {
+    visibility: visible;
+    color: #000 !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+
+  #seccion-reportes {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}

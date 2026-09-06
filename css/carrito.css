@@ -1,0 +1,195 @@
+/* ==========================================================================
+   css/carrito.css  —  Estilos de la página del carrito.
+   ========================================================================== */
+
+/* --------------------------- Línea del carrito -------------------------- */
+#lineas-carrito {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 26px;
+}
+
+.linea-carrito {
+  display: grid;
+  grid-template-columns: 84px 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+  background: var(--blanco);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 14px;
+}
+
+.linea-carrito img {
+  width: 84px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.linea-info h4 {
+  font-size: 1rem;
+  margin-bottom: 3px;
+}
+
+.linea-extras {
+  font-size: 0.78rem;
+  color: #a06218;
+  background: #fbeeda;
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+}
+
+.linea-precio-unitario {
+  font-size: 0.85rem;
+  color: var(--gris-texto);
+}
+
+/* Selector de cantidad */
+.linea-cantidad {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-cant {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--borde-suave);
+  background: #fbeeda;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn-cant:hover {
+  background: var(--amarillo);
+}
+
+.linea-cantidad span {
+  font-weight: 700;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Precio y botón eliminar */
+.linea-subtotal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  font-weight: 800;
+}
+
+.btn-eliminar {
+  background: #f5d3d3;
+  border: none;
+  color: var(--rojo-oscuro);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-eliminar:hover {
+  background: #efbaba;
+}
+
+/* ------------------------ Carrito vacío --------------------------------- */
+.carrito-vacio {
+  background: var(--blanco);
+  border: 2px dashed var(--borde-suave);
+  border-radius: var(--radio);
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.carrito-vacio p {
+  font-size: 1.1rem;
+  margin-bottom: 18px;
+  color: var(--gris-texto);
+}
+
+/* ------------------------ Resumen de compra ----------------------------- */
+.resumen {
+  background: var(--blanco);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  max-width: 480px;
+  margin-left: auto;
+  padding: 24px;
+}
+
+.resumen h3 {
+  font-size: 1.2rem;
+  margin-bottom: 14px;
+  color: var(--rojo);
+}
+
+.resumen-linea {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--borde-suave);
+}
+
+.resumen-total {
+  border-bottom: none;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--rojo-oscuro);
+}
+
+.resumen-botones {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.resumen-botones .btn {
+  flex: 1;
+  min-width: 150px;
+}
+
+/* -------------------------- Responsive ---------------------------------- */
+@media (max-width: 720px) {
+  .linea-carrito {
+    grid-template-columns: 70px 1fr;
+    grid-template-areas:
+      "imagen  info"
+      "imagen  cantidad"
+      "subtotal subtotal";
+  }
+
+  .linea-carrito img {
+    grid-area: imagen;
+    width: 70px;
+    height: 64px;
+  }
+
+  .linea-info {
+    grid-area: info;
+  }
+
+  .linea-cantidad {
+    grid-area: cantidad;
+  }
+
+  .linea-subtotal {
+    grid-area: subtotal;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px dashed var(--borde-suave);
+    padding-top: 8px;
+  }
+}
